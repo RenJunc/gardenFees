@@ -9,6 +9,7 @@ import collec from '@/components/garden/collec'
 //智能缴费
 import payCost from '@/components/payCost'
 import billConfim from '@/components/payCost/billConfim'
+import billConfim_eq from '@/components/payCost/billConfim_eq'
 //手工缴费
 import manualPayment from '@/components/manualPayment'
 import childPayment from '@/components/manualPayment/childPayment'
@@ -60,6 +61,11 @@ export default new Router({
       path: '/billConfim',
       name: 'billConfim',
       component: billConfim
+    },
+    {
+      path: '/billConfim_eq',
+      name: 'billConfim_eq',
+      component: billConfim_eq
     },
     {
       path:'/manualPayment',

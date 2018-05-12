@@ -76,7 +76,8 @@
     methods: {
       ok() {
         // this.$Message.info('Clicked ok');
-        this.$router.push({name:"billConfim"})
+        // this.$router.push({name:"billConfim"})
+        this.$router.push({name:"billConfim_eq"})
       },
       cancel() {
       },
@@ -88,7 +89,7 @@
 	}
 </script>
 
-<style scoped>
+<style>
   .pay_promt {
     margin-top: 20px;
     line-height: 40px;
@@ -129,5 +130,20 @@
     display: inline-block;
     margin-left: 10px;
     cursor: pointer;
+  }
+  /*.ivu-btn-primary{*/
+    /*background: #32c296;*/
+    /*border-color: #32c296;*/
+  /*}*/
+  .ivu-btn-primary{
+    background: #32c296;
+    border-color: #32c296;
+  }
+  .ivu-btn-primary:hover{
+    background: #32c296;
+    border-color: #32c296;
+  }
+  .ivu-btn-text{
+    border: 1px solid #ccc;
   }
 </style>

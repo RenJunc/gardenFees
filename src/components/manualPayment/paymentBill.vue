@@ -143,6 +143,8 @@
         this.data6.splice(index, 1);
       },
       reimport(){
+        // this.$router.push({name:"payCost",params:{modal1:true}})
+        history.go(-1)
       },
       ok () {
         this.$Message.info('Clicked ok');

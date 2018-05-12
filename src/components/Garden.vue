@@ -14,7 +14,7 @@
           <b>30<i>（人）</i></b><br>
           <b>300<i>（元）</i></b>
         </div>
-        <span class="remind_span">一键催费</span>
+        <span class="remind_span" @click="modal1 = true">一键催费</span>
       </div>
       <div class="list collec">
         <v-custom :tit="'今日收款'" :tit_span="'查看'" @custom-event="collec"></v-custom>
@@ -31,7 +31,8 @@
           <span @click="doPrint">打印</span>
         </div>
         <div class="qrcode_text" id="qrcode_text">
-          <vue-qr text="y2.bbtree.com" class="ddd" id="qr_text"></vue-qr>
+          <!--<vue-qr text="y2.bbtree.com" class="ddd" id="qr_text"></vue-qr>-->
+          <div id="qrcode" ref="qrcode"></div>
           <span>(智慧树新考勤学校)</span>
         </div>
         <div class="qrcode_text" id="qrcode_text1">
@@ -47,18 +48,32 @@
           <!--endprint-->
         </div>
       </div>
+      <Modal
+        v-model="modal1"
+        title="一键催费"
+        @on-ok="ok"
+        :mask-closable="false"
+        @on-cancel="cancel">
+        <p>本次一键催费的账单为10条</p>
+        <p>温馨提示：单条账单同一天内只能催收一次！</p>
+      </Modal>
     </div>
 </template>
 
 <script>
   import vCustom from './garden/custom'
-  import VueQr from 'vue-qr'
+  // import QRCode from 'qrcodejs2'
+  import qrcode from './common/qrcode'
   import html2canvas from 'html2canvas'
 	export default {
 		name: "Garden",
+    data(){
+		  return {
+        modal1:false
+      }
+    },
     components:{
-      vCustom,
-      VueQr
+      vCustom
     },
     methods: {
       record() {
@@ -112,11 +127,31 @@
         window.print()
         // 重新加载页面，以刷新数据
         window.location.reload()
-      }
+      },
+      rushFee(){
+
+      },
+      ok () {
+        this.$Message.info('Clicked ok');
+      },
+      cancel () {
+        this.$Message.info('Clicked cancel');
+      },
+      _getQart: function() {
+
+          var qrcode = new QRCode(document.getElementById("qrcode"), {
+            width : 130,//设置宽高
+            height : 130  ,
+            text:'y2.bbtree.com'
+          });
+      },
 
 
+    },
+    mounted () {
+      this._getQart()
     }
-	}
+  }
 </script>
 
 <style>
@@ -302,5 +337,19 @@
   #qr_text1 img{
     width: 100%;
     height: 100%;
+  }
+  .ivu-btn-primary, .ivu-btn-primary:active,.ivu-btn-primary:hover{
+    background: #32c296;
+    border-color: #32c296;
+  }
+  .ivu-btn-text:hover,.ivu-btn-text{
+    border:1px solid #dee4ed;
+    background: #fff;
+    color: #666;
+  }
+  .ivu-btn-text.active, .ivu-btn-text:active{
+    border:1px solid #dee4ed;
+    background: #fff;
+    color: #666;
   }
 </style>
