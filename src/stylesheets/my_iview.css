@@ -1,0 +1,215 @@
+/**
+自定义样式，覆盖 iview 样式
+ */
+.ivu-btn-primary,.ivu-btn-primary:hover {
+  background: #32c296;
+  border-color: #32c296;
+}
+
+.ivu-btn-primary.active, .ivu-btn-primary:active {
+  color: #f2f2f2;
+  background: #32c296;
+  border-color: #32c296;
+}
+
+.ivu-btn:hover {
+  color: #32c296;
+  border-color: #32c296;
+}
+
+.ivu-btn-primary:hover {
+  color: #fff;
+}
+
+.ivu-input {
+  height: inherit;
+  font-size: 14px;
+}
+
+.ivu-input:hover,
+.ivu-input:focus {
+  border-color: #32c296;
+  box-shadow: 0 0 0 2px rgba(53, 183, 143, .2);
+}
+
+.ivu-select {
+  min-height: 34px !important;
+}
+
+.ivu-select-single .ivu-select-selection .ivu-select-placeholder, .ivu-select-single .ivu-select-selection .ivu-select-selected-value {
+  min-height: 34px !important;
+  line-height: 34px !important;
+  font-size: 14px !important;
+}
+
+.ivu-select-single .ivu-select-selection {
+  min-height: 34px !important;
+}
+
+.ivu-select-disabled .ivu-select-selection {
+  background-color: #f9fafb !important;
+}
+
+.ivu-select-disabled .ivu-select-selection span {
+  /*color: #999999 !important;*/
+}
+
+.el-input__inner:hover {
+  border-color: #32c296;
+}
+
+.ivu-select-visible .ivu-select-selection {
+  border-color: #32c296;
+  box-shadow: 0 0 0 2px rgba(53, 183, 143, 0.2) !important;
+}
+
+.ivu-select-selection:hover {
+  border-color: #32c296;
+}
+
+.ivu-select:focus .ivu-select-selection {
+  border-color: #32c296;
+}
+
+.ivu-select-item-selected, .ivu-select-item-selected:hover {
+  background: rgba(53, 183, 143, 0.9);
+}
+
+.ivu-select-item:hover {
+  background: rgba(53, 183, 143, 0.1);
+}
+
+.ivu-select-multiple .ivu-select-selection .ivu-select-placeholder {
+  color: #ccc;
+}
+
+.ivu-icon-arrow-down-b:before {
+  color: #bcc1d0;
+  font-size: 12px;
+}
+
+.ivu-select-dropdown-list .ivu-select-item {
+  font-size: 14px;
+}
+
+.ivu-select-dropdown {
+  box-shadow: 0px 2px 18px 0px rgba(0, 0, 0, 0.12);
+  border-radius: 4px;
+}
+
+
+.ivu-page-item-active {
+  border-color: #32c296 !important;
+  background-color: #32c296 !important;
+}
+
+
+.ivu-page-next:hover, .ivu-page-prev:hover, .ivu-page-item:hover {
+  border-color: #32c296;
+  color: #32c296;
+}
+.ivu-page-item:hover a{
+  color: #32c296;
+}
+.ivu-page-item-active a, .ivu-page-item-active:hover a {
+  color: #fff;
+}
+.ivu-page-options-elevator input:hover {
+  border-color: #32c296;
+}
+.ivu-page-options-elevator input:focus {
+  border-color: #32c296;
+  outline: 0;
+  box-shadow: 0 0 0 2px rgba(53, 183, 143, .2);
+}
+.ivu-date-picker-rel{
+  height: inherit;
+}
+.ivu-input-wrapper{
+  height: inherit;
+}
+
+.ivu-select-dropdown{
+  font-size: 14px;
+}
+
+.ivu-date-picker-cells-cell-selected em, .ivu-date-picker-cells-cell-selected:hover em{
+  background: #32c296;
+}
+.ivu-date-picker-cells-cell-today em:after{
+  background: #32c296;
+}
+.ivu-picker-confirm>span{
+  color: #32c296 !important;
+}
+.ivu-btn-primary{
+  background: #32c296;
+  border-color:#32c296;
+}
+.ivu-btn-text:hover{
+  color: #32c296;
+}
+.ivu-time-picker-cells-cell-selected, .ivu-time-picker-cells-cell-selected:hover{
+  color: #32c296;
+}
+.ivu-date-picker-cells-cell:hover em {
+  background: rgba(53, 183, 143, 0.1);
+}
+.ivu-picker-panel-icon-btn:hover,.ivu-date-picker-header-label:hover{
+  color: #32c296;
+}
+.ivu-input[disabled], fieldset[disabled] .ivu-input{
+  background: #f9fafb;
+  color: #999;
+}
+.ivu-date-picker-cells-cell-range:before {
+  background: rgba(53, 183, 143, 0.1);
+}
+.ivu-checkbox-checked .ivu-checkbox-inner {
+  border-color: #32c296;
+  background-color: #32c296;
+}
+.ivu-radio-checked .ivu-radio-inner {
+  border-color: #32c296;
+}
+.ivu-radio-inner:after {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  left: 2px;
+  top: 2px;
+  border-radius: 6px;
+  display: table;
+  border-top: 0;
+  border-left: 0;
+  content: ' ';
+  background-color: #32c296;
+  opacity: 0;
+  transition: all .2s ease-in-out;
+  transform: scale(0);
+}
+.ivu-btn-success{
+  border-color: #32c296;
+  background-color: #32c296;
+}
+.ivu-btn-success:hover{
+  color: #fff;
+  border-color: #32c296;
+  background-color: #32c296;
+}
+.ivu-btn:hover{
+  border: 1px solid #ccc;
+}
+.ivu-table{
+  font-size: 14px;
+}
+.ivu-table .hoverSapn{
+  color: #4ca8eb;
+}
+.ivu-table .hoverSapn:hover{
+  text-decoration: underline;
+  cursor: pointer;
+}
+.ivu-table-tip{
+  overflow: hidden;
+}

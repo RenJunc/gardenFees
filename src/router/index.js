@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import HelloWorld from '@/components/HelloWorld'
 //首页
 import Garden from '@/components/Garden'
 import record from '@/components/garden/record'
@@ -24,91 +23,113 @@ import queryBill from '@/components/queryBill'
 import checkDetail from '@/components/queryBill/checkDetail'
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
   routes: [
-    // {
-    //   path: '/',
-    //   name: 'HelloWorld',
-    //   component: HelloWorld
-    // }
-    { path: '/', redirect: '/Garden' },
+    // { path: '/', redirect: '/Garden' },
     {
       path: '/Garden',
       name: 'Garden',
-      component: Garden
+      component: Garden,
+      meta: {}
     },
     {
       path: '/record',
       name: 'record',
-      component: record
+      component: record,
+      meta: {}
     },
     {
       path: '/remind',
       name: 'remind',
-      component: remind
+      component: remind,
+      meta: {}
     },
     {
       path: '/collec',
       name: 'collec',
-      component: collec
+      component: collec,
+      meta: {}
     },
     {
       path: '/payCost',
       name: 'payCost',
-      component: payCost
+      component: payCost,
+      meta: {}
     },
     {
       path: '/billConfim',
       name: 'billConfim',
-      component: billConfim
+      component: billConfim,
+      meta: {}
     },
     {
-      path: '/billConfim_eq',
+      path: '/billConfim_eq/:dataObj',
       name: 'billConfim_eq',
-      component: billConfim_eq
+      component: billConfim_eq,
+      meta: {}
     },
     {
       path:'/manualPayment',
       name:'manualPayment',
       component:manualPayment,
+      meta: {},
       children:[
         {
           path: '/',
-          name: 'classPayment',
-          component: classPayment
+          redirect: '/manualPayment/classPayment',
+          meta: {},
         },
         {
-          path: '/childPayment',
+          path: '/manualPayment/classPayment',
+          name: 'classPayment',
+          component: classPayment,
+          meta: {}
+        },
+        {
+          path: '/manualPayment/childPayment',
           name: 'childPayment',
-          component: childPayment
+          component: childPayment,
+          meta: {}
         },
 
         {
-          path: '/newPayment',
+          path: '/manualPayment/newPayment',
           name: 'newPayment',
-          component: newPayment
+          component: newPayment,
+          meta: {}
         },
         {
-          path:'/paymentBill',
+          path:'/manualPayment/paymentBill',
           name: 'paymentBill',
-          component: paymentBill
+          component: paymentBill,
+          meta: {}
         }
       ]
     },
     {
       path:'/payMentRecordEnquiry',
       name:'payMentRecordEnquiry',
-      component:payMentRecordEnquiry
+      component:payMentRecordEnquiry,
+      meta: {title: "缴费记录查询"}
     },
     {
       path:'/queryBill',
       name:'queryBill',
-      component:queryBill
+      component:queryBill,
+      meta: {title: "账单查询", }
     },
     {
-      path:'/checkDetail',
+      path:'/checkDetail/:id/:payStatus?',
       name:'checkDetail',
-      component:checkDetail
+      component:checkDetail,
+      meta: {title: "账单详情"}
     }
   ]
 })
+router.beforeEach((to, from, next) => {
+  // console.log(to.name);
+  next()
+})
+
+
+export default router

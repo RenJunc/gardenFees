@@ -38,6 +38,19 @@ const devWebpackConfig = merge(baseWebpackConfig, {
       ? { warnings: false, errors: true }
       : false,
     publicPath: config.dev.assetsPublicPath,
+    before: function (app) {
+      app.all('*', function (req, res, next) {
+        if (req.method.toLowerCase() == 'get' && req.path != '/'/*除去根目录*/ && req.originalUrl.indexOf('.') === -1 /*资源文件*/) {
+          delete require(path.resolve(__dirname, '../src/data/' + req.originalUrl + '.js'))
+          return res.json(require(path.resolve(__dirname, '../src/data/' + req.originalUrl + '.js'))())
+        } else if (req.method.toLowerCase() == 'post') {
+          var rqjs = require(path.resolve(__dirname, '../src/data/' + req.originalUrl + '.js'))
+          var obj = typeof rqjs === 'function' ? rqjs() : rqjs
+          return res.json(obj)
+        }
+        return next()
+      })
+    },
     proxy: config.dev.proxyTable,
     quiet: true, // necessary for FriendlyErrorsPlugin
     watchOptions: {

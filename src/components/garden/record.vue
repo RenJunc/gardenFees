@@ -3,21 +3,28 @@
       <h3>提现记录</h3>
       <Table border :columns="columns7" :data="list"></Table>
       <div class="page">
-        <Button type="primary" class="export">导出Excel</Button>
-        <Page :total="total" :page-size="pageSize" size="small" show-elevator show-sizer class="page_page" @on-change="change" @on-page-size-change="size"></Page>
+        <a href="https://javaport.bbtree.com/erpfinanceapi/vrf/v1/finance/gecashrecordexport">
+          <Button type="primary" class="export" >导出Excel</Button>
+        </a>
+        <!--<Page :total="total" :page-size="pageSize" size="small" show-elevator show-sizer class="page_page" @on-change="change" @on-page-size-change="size"></Page>-->
+        <PartPage :table-data="list"  class="page_page" :total="total" :current="curPage" :page-size="pageSize"
+                  @changePage="changePage" @changePageSize="changePageSize"></PartPage>
       </div>
     </div>
 </template>
 
 <script>
-	export default {
+  import API from '../../api/api'
+  import PartPage from '../Part/part_page'
+
+  export default {
 		name: "record",
     data () {
       return {
         columns7: [
           {
             title: '创建时间',
-            key: 'releaceDate'
+            key: 'createDate'
           },
           {
             title: '金额（元）',
@@ -29,11 +36,14 @@
           },
           {
             title: '操作人',
-            key: 'userName'
+            key: 'drawName'
           },
           {
             title: '状态',
-            key: 'theStatus'
+            key: 'theStatus',
+            render:(h,params) => {
+              return h('span',this.theStatus(params.row.theStatus));
+            }
           },
           {
             title: '备注',
@@ -46,7 +56,10 @@
             align: 'center',
             render: (h, params) => {
               return h('div', [
-                h('Button', {
+                h('span', {
+                  'class': {
+                    hoverSapn: true
+                  },
                   props: {
                     type: 'primary',
                     size: 'small'
@@ -56,7 +69,7 @@
                   },
                   on: {
                     click: () => {
-                      this.show(params)
+                      window.open('https://javaport.bbtree.com/erpfinanceapi/vrf/v1/finance/billcashprint?billId='+params.row.id)
                     }
                   }
                 }, '打印')
@@ -64,280 +77,83 @@
             }
           },
         ],
-        data6: [
-          {
-            releaceDate: '2018-04-05 10：30：55',
-            money:'1000',
-            drawBankCard:'招商银行***1424',
-            userName:'陈波1',
-            theStatus:'成功',
-            memo:'提4月份学费',
-            id:'0',
-            address: 'New York No. 1 Lake Park'
-          },
-          {
-            id:'1',
-            releaceDate: '2018-04-05 10：30：55',
-            money:'1000',
-            drawBankCard:'招商银行***1424',
-            userName:'陈波2',
-            theStatus:'失败',
-            memo:'提4月份学费',
-            address: 'New York No. 1 Lake Park'
-          },
-          {
-            id:'2',
-            releaceDate: '2018-04-05 10：30：55',
-            money:'1000',
-            drawBankCard:'招商银行***1424',
-            userName:'陈波3',
-            theStatus:'处理中',
-            memo:'提4月份学费',
-            address: 'New York No. 1 Lake Park'
-          },
-          {
-            id:'3',
-            releaceDate: '2018-04-05 10：30：55',
-            money:'1000',
-            drawBankCard:'招商银行***1424',
-            userName:'陈波4',
-            theStatus:'成功',
-            memo:'提4月份学费',
-            address: 'New York No. 1 Lake Park'
-          },
-          {
-            id:'4',
-            releaceDate: '2018-04-05 10：30：55',
-            money:'1000',
-            drawBankCard:'招商银行***1424',
-            userName:'陈波5',
-            theStatus:'失败',
-            memo:'提4月份学费',
-            address: 'New York No. 1 Lake Park'
-          },
-          {
-            id:'5',
-            releaceDate: '2018-04-05 10：30：55',
-            money:'1000',
-            drawBankCard:'招商银行***1424',
-            userName:'陈波6',
-            theStatus:'处理中',
-            memo:'提4月份学费',
-            address: 'New York No. 1 Lake Park'
-          },
-          {
-            id:'6',
-            releaceDate: '2018-04-05 10：30：55',
-            money:'1000',
-            drawBankCard:'招商银行***1424',
-            userName:'陈波7',
-            theStatus:'成功',
-            memo:'提4月份学费',
-            address: 'New York No. 1 Lake Park'
-          },
-          {
-            id:'7',
-            releaceDate: '2018-04-05 10：30：55',
-            money:'1000',
-            drawBankCard:'招商银行***1424',
-            userName:'陈波8',
-            theStatus:'失败',
-            memo:'提4月份学费',
-            address: 'New York No. 1 Lake Park'
-          },
-          {
-            id:'8',
-            releaceDate: '2018-04-05 10：30：55',
-            money:'1000',
-            drawBankCard:'招商银行***1424',
-            userName:'陈波9',
-            theStatus:'处理中',
-            memo:'提4月份学费',
-            address: 'New York No. 1 Lake Park'
-          },
-          {
-            id:'9',
-            releaceDate: '2018-04-05 10：30：55',
-            money:'1000',
-            drawBankCard:'招商银行***1424',
-            userName:'陈波10',
-            theStatus:'成功',
-            memo:'提4月份学费',
-            address: 'New York No. 1 Lake Park'
-          },
-          {
-            id:'10',
-            releaceDate: '2018-04-05 10：30：55',
-            money:'1000',
-            drawBankCard:'招商银行***1424',
-            userName:'陈波11',
-            theStatus:'失败',
-            memo:'提4月份学费',
-            address: 'New York No. 1 Lake Park'
-          },
-          {
-            id:'11',
-            releaceDate: '2018-04-05 10：30：55',
-            money:'1000',
-            drawBankCard:'招商银行***1424',
-            userName:'陈波12',
-            theStatus:'处理中',
-            memo:'提4月份学费',
-            address: 'New York No. 1 Lake Park'
-          },
-          {
-            id:'12',
-            releaceDate: '2018-04-05 10：30：55',
-            money:'1000',
-            drawBankCard:'招商银行***1424',
-            userName:'陈波13',
-            theStatus:'成功',
-            memo:'提4月份学费',
-            address: 'New York No. 1 Lake Park'
-          },
-          {
-            id:'13',
-            releaceDate: '2018-04-05 10：30：55',
-            money:'1000',
-            drawBankCard:'招商银行***1424',
-            userName:'陈波14',
-            theStatus:'失败',
-            memo:'提4月份学费',
-            address: 'New York No. 1 Lake Park'
-          },
-          {
-            id:'14',
-            releaceDate: '2018-04-05 10：30：55',
-            money:'1000',
-            drawBankCard:'招商银行***1424',
-            userName:'陈波15',
-            theStatus:'处理中',
-            memo:'提4月份学费',
-            address: 'New York No. 1 Lake Park'
-          },
-          {
-            id:'15',
-            releaceDate: '2018-04-05 10：30：55',
-            money:'1000',
-            drawBankCard:'招商银行***1424',
-            userName:'陈波16',
-            theStatus:'成功',
-            memo:'提4月份学费',
-            address: 'New York No. 1 Lake Park'
-          },
-          {
-            id:'16',
-            releaceDate: '2018-04-05 10：30：55',
-            money:'1000',
-            drawBankCard:'招商银行***1424',
-            userName:'陈波17',
-            theStatus:'失败',
-            memo:'提4月份学费',
-            address: 'New York No. 1 Lake Park'
-          },
-          {
-            id:'17',
-            releaceDate: '2018-04-05 10：30：55',
-            money:'1000',
-            drawBankCard:'招商银行***1424',
-            userName:'陈波18',
-            theStatus:'处理中',
-            memo:'提4月份学费',
-            address: 'New York No. 1 Lake Park'
-          },
-          {
-            id:'18',
-            releaceDate: '2018-04-05 10：30：55',
-            money:'1000',
-            drawBankCard:'招商银行***1424',
-            userName:'陈波19',
-            theStatus:'成功',
-            memo:'提4月份学费',
-            address: 'New York No. 1 Lake Park'
-          },
-          {
-            id:'19',
-            releaceDate: '2018-04-05 10：30：55',
-            money:'1000',
-            drawBankCard:'招商银行***1424',
-            userName:'陈波20',
-            theStatus:'失败',
-            memo:'提4月份学费',
-            address: 'New York No. 1 Lake Park'
-          },
-          {
-            id:'20',
-            releaceDate: '2018-04-05 10：30：55',
-            money:'1000',
-            drawBankCard:'招商银行***1424',
-            userName:'陈波21',
-            theStatus:'处理中',
-            memo:'提4月份学费',
-            address: 'New York No. 1 Lake Park'
-          },
-          {
-            id:'21',
-            releaceDate: '2018-04-05 10：30：55',
-            money:'1000',
-            drawBankCard:'招商银行***1424',
-            userName:'陈波22',
-            theStatus:'成功',
-            memo:'提4月份学费',
-            address: 'New York No. 1 Lake Park'
-          },
-          {
-            id:'22',
-            releaceDate: '2018-04-05 10：30：55',
-            money:'1000',
-            drawBankCard:'招商银行***1424',
-            userName:'陈波23',
-            theStatus:'失败',
-            memo:'提4月份学费',
-            address: 'New York No. 1 Lake Park'
-          },
-          {
-            id:'23',
-            releaceDate: '2018-04-05 10：30：55',
-            money:'1000',
-            drawBankCard:'招商银行***1424',
-            userName:'陈波24',
-            theStatus:'处理中',
-            memo:'提4月份学费',
-            address: 'New York No. 1 Lake Park'
-          }
-        ],
+        data6: '',
         list:[],
         total:0,
-        pageSize:10
+        pageSize:10,
+        curPage:1
       }
     },
+    created(){
+      this.requestDrawlistApi({curPage:1})
+    },
+    components:{
+      PartPage
+    },
     methods: {
-      show (index) {
-        console.log(index.row.id)
+		  /*
+		  * 提现记录列表
+		  * */
+      requestDrawlistApi(obj={}){
+        let params ={
+          curPage: this.curPage,
+          pageSize: this.pageSize
+        }
+        if (obj.curPage) {
+          params.curPage = obj.curPage
+        }
+        API.requestDrawlistApi(params).then(json => {
+          if(json.data.code==='000'){
+            let data = json.data.data;
+            this.list = data.items;
+            this.pageSize = data.pageSize
+            this.total = data.count
+            this.curPage = data.curPage
+          }else {
+            console.log(json.data.msg);
+          }
+        }).catch((error) => {
+          console.log(error)
+        })
       },
-      change(page){
-        this.list = this.data6.slice(this.pageSize * (page - 1), this.pageSize * (page - 1) + this.pageSize)
+      /*change(page){
+        this.curPage = page
+        this.requestDrawlistApi()
       },
       size(page){
         this.pageSize = page
-        this.list = this.data6.slice(0,page)
+        this.requestDrawlistApi({curPage: 1})
+      },*/
+      changePage (page) {
+        this.curPage = page
+        this.requestDrawlistApi()
       },
-    },
-    mounted(){
-      this.total  = this.data6.length,
-      this.list = this.data6.slice(0,this.pageSize)
+      changePageSize (page) {
+        this.pageSize = page
+        this.requestDrawlistApi({curPage: 1})
+      },
+      theStatus(type){
+        if(type === 1){
+          return '提现中'
+        }else if(type === 2){
+          return '提现成功'
+        }else if(type === 3){
+          return '提现失败'
+        }
+      },
     }
 	}
 </script>
 
 <style scoped>
-  body{
-    background: #fff;
+  .record{
+    margin: 0 16px;
   }
 h3{
   line-height: 40px;
   color: #333;
   margin-left: 20px;
+  font-size: 16px;
 }
   .page{
     margin-top: 10px;
@@ -351,3 +167,4 @@ h3{
     margin-right: 20px;
   }
 </style>
+

@@ -2,48 +2,50 @@
   <div class="childPayment">
     <div class="selectChild classPayMent">
       <span><b class="xin">*</b>选择幼儿：</span>
-      <input type="text" placeholder="姓名/拼音/首字母/手机号查询" v-model="searchChild" @keyup.enter='show($event)'
-             class="searchInput">
-      <label>合计：10名幼儿</label>
+      <PartSearchInput @setChildObj="setChildObjFn" placeholder="姓名/拼单/首字母/手机号查询"></PartSearchInput>
+      <label>合计：{{childList.length}}名幼儿</label>
     </div>
     <div class="childList">
-      <div class="childListDiv" ref="listcheck">
-        <ul v-for="item,index in childData">
-          <li v-for="option,idx in item.people"><b>{{option.name}}</b><b>{{item.className}}</b><Icon type="close-circled"></Icon></li>
+      <div class="childListDiv" ref="listcheck" v-if="childList.length > 0">
+        <ul>
+          <li v-for="item,index in childList"><b>{{item.childName}}</b><b>{{item.className}}</b><em
+            @click="delChild(index)">
+            <Icon type="close-circled"></Icon>
+          </em></li>
         </ul>
       </div>
       <em @click="checkboxdown()">
-        <Icon type="ios-arrow-down" v-if="childData.length>4 && iconselect == 1" ></Icon>
+        <Icon type="ios-arrow-down" v-if="childList.length>8 && iconselect == 1"></Icon>
       </em>
       <em @click="checkboxup()">
-        <Icon type="ios-arrow-up" v-if="childData.length>4 && iconselect == 2"></Icon>
+        <Icon type="ios-arrow-up" v-if="childList.length>8 && iconselect == 2"></Icon>
       </em>
     </div>
     <div class="billName classPayMent">
       <span><b class="xin">*</b>账单名称：</span>
-      <Input v-model="billText" placeholder="如2018年4托费" style="width: 180px"/>
+      <Input v-model="billName" placeholder="如2018年4托费" style="width: 300px"/>
     </div>
     <div class="classPayMent">
       <span>备注：</span>
-      <Input v-model="remakText" placeholder="最多100个字符." style="width: 180px"/>
+      <Input v-model="billMemo" placeholder="最多100个字符." style="width: 300px"/>
     </div>
     <div class="classPayMent"><span>
       <b class="xin">*</b>账单期限：</span>
-      <Select v-model="billLimit" style="width:180px">
+      <Select v-model="billCloseType" style="width:300px">
         <Option v-for="item in options" :value="item.value" :key="item.value">{{ item.label }}</Option>
       </Select>
     </div>
     <div class="classPayMent"><span>
       <b class="xin">*</b>收费总额：</span>
-      <input type="text" v-model="sumPriceDeatil" onkeyup="value=value.replace(/[^-\d\.]/g,'')" class="sumInput">
+      <input type="text" v-model="billTotal" onkeyup="value=value.replace(/[^-\d\.]/g,'')" class="sumInput">
       元
     </div>
     <div class="classPayMent"><span>
-      <b class="xin">*</b>收费详情：</span>
+      收费详情：</span>
       <ul class="details_ul">
-        <li v-for="item,index in chargeData">
-          <p><input type="text" v-model="item.chargeName"></p>
-          <p><input type="text" v-model="item.chargePrice" onkeyup="value=value.replace(/[^-\d\.]/g,'')"
+        <li v-for="item,index in itemArray">
+          <p><input type="text" v-model="item.name" placeholder="输入收费项目"></p>
+          <p><input type="text" v-model="item.money" onkeyup="value=value.replace(/[^-\d\.]/g,'')"
                     @blur="sumPriceC"/></p>
           <p @click="delCharge(index)">
             <em>
@@ -52,8 +54,8 @@
           </p>
         </li>
         <li class="addChargeList">
-          <p><input type="text" v-model="createdobj.chargeName"></p>
-          <p><input type="text" v-model="createdobj.chargePrice"></p>
+          <p><input type="text" v-model="createdobj.name" placeholder="输入收费项目"></p>
+          <p><input type="text" v-model="createdobj.money" placeholder="输入收费金额"  onkeyup="value=value.replace(/[^-\d\.]/g,'')" @blur="createSum"></p>
           <p @click="addCharge">
             <em>
               <Icon type="ios-plus-empty"></Icon>
@@ -62,217 +64,225 @@
         </li>
       </ul>
       <div class="pub_confirm">
-        <i @mouseover="onMouseOver" @mouseleave="onMouseLeave"><Icon type="help-circled"></Icon></i>
-        <p class="confirm_p" ref="confirm_p">温馨提示：<br>收费项可以填加多个，现有收费项目名称可修改，如<em style="color: dodgerblue;font-style: normal">伙食费改成书费</em>；退费可金额添加负数如-200</p>
+        <i @mouseover="onMouseOver" @mouseleave="onMouseLeave">
+          <Icon type="help-circled"></Icon>
+        </i>
+        <p class="confirm_p" ref="confirm_p">温馨提示：<br>收费项可以填加多个，现有收费项目名称可修改，如<em
+          style="color: dodgerblue;font-style: normal">伙食费改成书费</em>；退费可金额添加负数如-200</p>
       </div>
     </div>
-    <div class="conmit">*红色星号为必填项</div>
-    <Button type="primary" @click="nextBill" class="next">下一步</Button>
+    <div class="btn-box">
+      <div class="conmit">带*为必填项</div>
+      <Button type="primary" @click="nextBill" class="next">下一步</Button>
+    </div>
 
   </div>
 </template>
 
 <script>
+  import API from '../../api/api'
+  import PartSearchInput from './Part/Part_search_input'
+  import { mapActions, mapState, mapGetters, mapMutations } from 'vuex'
+
   export default {
-    name: "childPayment",
-    data(){
+    name: 'childPayment',
+    data () {
       return {
         createdobj: {},
-        childData:[
-          {
-            className:'一班',
-            people:[
-              {
-                name:'张小萌1',
-                id:'0'
-              },
-              {
-                name:'李晓亮1',
-                id:'1'
-              },
-              {
-                name:'宋晓峰1',
-                id:'2'
-              }
-            ]
-          },
-          {
-            className:'二班',
-            people:[
-              {
-                name:'张小萌2',
-                id:'0'
-              },
-              {
-                name:'李晓亮2',
-                id:'1'
-              },
-              {
-                name:'宋晓峰2',
-                id:'2'
-              }
-            ]
-          },
-          {
-            className:'三班',
-            people:[
-              {
-                name:'张小萌3',
-                id:'0'
-              },
-              {
-                name:'李晓亮3',
-                id:'1'
-              },
-              {
-                name:'宋晓峰3',
-                id:'2'
-              }
-            ]
-          },
-          {
-            className:'四班',
-            people:[
-              {
-                name:'张小萌4',
-                id:'0'
-              },
-              {
-                name:'李晓亮4',
-                id:'1'
-              },
-              {
-                name:'宋晓峰4',
-                id:'2'
-              }
-            ]
-          },
-          {
-            className:'五班',
-            people:[
-              {
-                name:'张小萌5',
-                id:'0'
-              },
-              {
-                name:'李晓亮5',
-                id:'1'
-              },
-              {
-                name:'宋晓峰5',
-                id:'2'
-              }
-            ]
-          }
-        ],
-        iconselect:1,
-        billText:'',
-        remakText:'',
-        options: [{
-          value: '0',
-          label: '永久'
-        }, {
-          value: '1',
-          label: '两周'
-        }, {
-          value: '2',
-          label: '一个月'
-        }, {
-          value: '3',
-          label: '三个月'
-        }],
-        billLimit:'0',
-        sumPriceDeatil:'0.0',
-        chargeData: [
-          {
-            chargeName: '保教费',
-            chargePrice: '0.00'
-          },
-          {
-            chargeName: '伙食费',
-            chargePrice: '0.00'
-          },
-          {
-            chargeName: '退饭费',
-            chargePrice: '0.00'
-          },
-          {
-            chargeName: '托管费',
-            chargePrice: '0.00'
-          }
-        ],
-        searchChild:''
+        iconselect: 1,
+        billName: '',
+        billMemo: '',
+        options: [],
+        billCloseType: '0',
+        billTotal: '',
+        itemArray: [],
+        // searchChild:'',
+        listShow: false,
+        childList: [],
+        newItemArray:[],
+        creaMoney:0
       }
     },
+    components: {
+      PartSearchInput
+    },
+    computed: {
+      ...mapGetters('manualPayment', ['getChildPaymentData'])
+    },
     methods: {
-      checkboxdown() {
-        this.$refs.listcheck.style.height = 'auto';
+      checkboxdown () {
+        this.$refs.listcheck.style.height = 'auto'
         this.iconselect = 2
       },
-      checkboxup() {
-        this.$refs.listcheck.style.height = 80 + 'px';
+      checkboxup () {
+        this.$refs.listcheck.style.height = 80 + 'px'
         this.iconselect = 1
       },
-      addCharge() {
+      addCharge () {
         //判断一下在添加，都不让为空
-        if (!this.createdobj.chargePrice) {
-          this.createdobj.chargePrice = 0
+        if (!this.createdobj.money) {
+          this.createdobj.money = 0
         }
-        this.chargeData.push(this.createdobj)
-        this.sumPriceDeatil = 0
-        this.chargeData.forEach(item => {
-          this.sumPriceDeatil += parseFloat(item.chargePrice)//item.chargePrice*1
+        this.itemArray.push(this.createdobj)
+        this.billTotal = 0
+        this.itemArray.forEach(item => {
+          this.billTotal += parseFloat(item.money)//item.money*1
         })
-        console.log(this.chargeData)
+        // console.log(this.itemArray)
         this.createdobj = {}
       },
-      delCharge(index) {
-        console.log(index)
-        this.sumPriceDeatil = 0
-        this.chargeData.splice(index, 1)
-        this.chargeData.forEach(item => {
-          this.sumPriceDeatil += item.chargePrice * 1
+      delCharge (index) {
+        this.itemArray.splice(index, 1)
+        let priceSum = 0;
+        this.itemArray.forEach( item => {
+          if(item.money === ""){
+            item.money = 0
+          }
+          priceSum += Number(item.money)
+        });
+        if(this.createdobj.money === undefined){
+          this.creaMoney = 0
+        }else{
+          this.creaMoney= this.createdobj.money
+        }
+        this.billTotal = parseInt(this.creaMoney) + priceSum
+      },
+      sumPriceC () {
+        let priceSum = 0;
+        this.itemArray.forEach( item => {
+          if(item.money === ""){
+            item.money = 0
+          }
+          priceSum += Number(item.money)
+        });
+        this.billTotal = priceSum
+      },
+      createSum(){
+        let priceSum = 0;
+        this.itemArray.forEach( item => {
+          if(item.money === ""){
+            item.money = 0
+          }
+          priceSum += Number(item.money)
+        });
+        this.billTotal = parseInt(this.createdobj.money) + priceSum
+        this. newItemArray.push({
+          name:this.createdobj.name || '收费项目',
+          money:this.createdobj.money
         })
       },
-      sumPriceC() {
-        let priceSum = 0;
-        this.chargeData.forEach( item => {
-          console.log(item.chargePrice);
-          priceSum += parseFloat(item.chargePrice)
-        });
-        this.sumPriceDeatil = priceSum
+      onMouseOver () {
+        this.$refs.confirm_p.style.display = 'block'
       },
-      onMouseOver(){
-        this.$refs.confirm_p.style.display = 'block';
+      onMouseLeave () {
+        this.$refs.confirm_p.style.display = 'none'
       },
-      onMouseLeave(){
-        this.$refs.confirm_p.style.display = 'none';
-      },
-      nextBill(){
-        this.$router.push({name:"paymentBill",params:{num:0}})
-      },
-      show(ev) {
+      nextBill () {
+        let newArr = []
+        newArr = this.itemArray.concat(this.newItemArray)
+        if (this.childList.length === 0) {
+          this.$Message.warning('班级不能为空')
+        } else if (this.billName === '') {
+          this.$Message.warning('账单名称不能为空')
+        } else if (this.billCloseType === '') {
+          this.$Message.warning('账单期限不能为空')
+        } else if (this.billTotal === '') {
+          this.$Message.warning('收费总额不能为空')
+        } else {
+          let params = {
+            type: 2,
+            billName: this.billName,
+            childList: this.childList,
+            billCloseType: this.billCloseType,
+            billTotal: this.billTotal,
+            billMemo: this.billMemo,
+            itemArray: newArr
+          }
 
-        if (ev.keyCode == 13) {
-          console.log(this.searchChild)
+          // console.log(params)
+          this.$router.push({name: 'paymentBill', params: params})
+          this.$store.commit('manualPayment/setChildPaymentData', params)
+          this.$store.commit('manualPayment/setTabActive',1)
         }
+        // this.$router.push({name:"paymentBill",params:{type:2}})
       },
+      searchClass () {
+        this.listShow = true
+        API.requestFindChildConditionApi().then((json) => {
+          if (json.data.code === '000') {
+            console.log(json.data.data)
+          } else {
+            console.log(json.data.msg)
+          }
+        }).catch((error) => {
+          console.log(error)
+        })
+      },
+      setChildObjFn (obj) {
+        if (obj.childId !== undefined) {
+          this.childList.push(obj)
+        }
+
+        // console.log(this.childList)
+      },
+      delChild (index) {
+        this.childList.splice(index, 1)
+      }
+    },
+    mounted () {
+      const that  = this
+      API.requestBillStatusListApi({type: 3}).then((json) => {
+        if (json.data.code === '000') {
+          this.options = json.data.data
+        } else {
+          console.log(json.data.msg)
+        }
+      }).catch((error) => {
+        console.log(error)
+      })
+
+      // 有数据回显数据，没有再请求
+      if (JSON.stringify(that.getChildPaymentData) !== '{}') {
+        that.itemArray = that.getChildPaymentData.itemArray
+        that.billName = that.getChildPaymentData.billName
+        that.childList = that.getChildPaymentData.childList
+        that.billCloseType = that.getChildPaymentData.billCloseType
+        that.billTotal = that.getChildPaymentData.billTotal
+        that.billMemo = that.getChildPaymentData.billMemo
+      }else {
+        API.requestListItemApi({pageSize: 4, curPage: 1}).then((json) => {
+          if (json.data.code === '000') {
+            // console.log(json.data.data)
+            this.itemArray = json.data.data
+            this.itemArray.forEach((item) => {
+              item.money = 0
+            })
+          } else {
+            console.log(json.data.msg)
+          }
+        }).catch((error) => {
+          console.log(error)
+        })
+      }
     }
   }
 </script>
 
 <style scoped>
-  ul,ol,li{
+  ul, ol, li {
     list-style: none;
   }
-  .classPayMent{
+
+  .classPayMent {
     color: #333;
     clear: both;
     margin-top: 10px;
   }
+
   b {
     font-weight: normal;
   }
+
   .classPayMent span {
     width: 100px;
     float: left;
@@ -281,22 +291,26 @@
     margin-right: 20px;
     line-height: 40px;
   }
+
   .selectChild label {
     float: right;
     margin-right: 200px;
     font-size: 12px;
     color: red;
   }
-  .childList em .ivu-icon{
+
+  .childList em .ivu-icon {
     font-size: 20px;
   }
-  .xin{
+
+  .xin {
     color: red;
     margin-right: 5px;
   }
-  .sumInput{
+
+  .sumInput {
     display: inline-block;
-    width: 100px;
+    width: 150px;
     height: 32px;
     line-height: 1.5;
     padding: 4px 7px;
@@ -308,9 +322,10 @@
     background-image: none;
     position: relative;
     cursor: text;
-    transition: border .2s ease-in-out,background .2s ease-in-out,box-shadow .2s ease-in-out;
+    transition: border .2s ease-in-out, background .2s ease-in-out, box-shadow .2s ease-in-out;
     outline: none;
   }
+
   .details_ul {
     overflow: hidden;
     display: inline-block;
@@ -325,13 +340,15 @@
   .details_ul li p {
     display: inline-block;
   }
-  .details_ul li p em{
+
+  .details_ul li p em {
     font-size: 20px;
     cursor: pointer;
     margin-left: 10px;
   }
+
   .details_ul li p input {
-    width: 80px;
+    width: 120px;
     height: 32px;
     display: inline-block;
     line-height: 1.5;
@@ -345,35 +362,44 @@
     position: relative;
     cursor: text;
     outline: none;
-    transition: border .2s ease-in-out,background .2s ease-in-out,box-shadow .2s ease-in-out;
+    transition: border .2s ease-in-out, background .2s ease-in-out, box-shadow .2s ease-in-out;
   }
-  .pub_confirm{
+
+  .pub_confirm {
     display: inline-block;
     /*margin-left: 40px;*/
     margin-top: 8px;
   }
-  .pub_confirm i{
+
+  .pub_confirm i {
     float: left;
     margin-top: 2px;
     font-size: 16px;
   }
-  .pub_confirm p{
+
+  .pub_confirm p {
     line-height: 22px;
-    color:red;
+    color: red;
     margin-left: 26px;
     display: none;
   }
-  .conmit,.xin{
+
+  .conmit, .xin {
     color: red;
   }
-  .conmit{
+
+  .conmit {
     clear: both;
     margin-left: 20px;
+    font-size: 12px;
+    padding: 8px 0 5px 0;
   }
-  .next{
+
+  .next {
     margin-left: 20px;
-    display:block;
+    display: block;
   }
+
   .searchInput {
     width: 180px;
     height: 32px;
@@ -394,9 +420,14 @@
     transition: border-color .2s cubic-bezier(.645, .045, .355, 1);
   }
 
+  .chaxun {
+    position: relative;
+  }
+
   .searchInput::-webkit-input-placeholder {
     color: #aab2bd;
   }
+
   .childList {
     margin-left: 120px;
     overflow: hidden;
@@ -407,21 +438,43 @@
     height: 80px;
     overflow: hidden;
     display: inline-block;
+    border: 1px dashed #ccc;
+    margin-top: 10px;
+    padding: 0px 20px;
   }
 
-  .childListDiv ul {
-    margin-left: 20px;
+  .childListDiv ul li {
+    width: 170px;
     float: left;
-  }
-  .childListDiv ul li{
-    width: 160px;
     line-height: 40px;
   }
-  .childListDiv ul li b:nth-child(2){
-    margin:0 10px 0px 25px;
+
+  .childListDiv ul li b:nth-child(2) {
+    margin: 0 10px 0px 10px;
   }
+
   .childListDiv ul li i {
     cursor: pointer;
     color: #32c296;
+  }
+
+  .searchList {
+    width: 180px;
+    height: 200px;
+    position: absolute;
+    overflow-y: scroll;
+    z-index: 2;
+    left: 120px;
+  }
+
+  .searchList li {
+    line-height: 30px;
+    padding-left: 20px;
+    cursor: pointer;
+    background: #f5f5f5;
+    margin-top: 2px;
+  }
+  .btn-box{
+    padding-left: 98px;
   }
 </style>
